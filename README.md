@@ -16,11 +16,13 @@ __Table of content__
 > Pre-requirement
 **python3**, **pip**, **virtualenv**, **postgres**
 
-#### Install The virtualenv
+#### Install The virtualenv & other env
 ```sh
  >>> pip install virtualenv
  >>> virtualenv --version
  v16.7.9
+ >>> brew install Caskroom/cask/wkhtmltopdf
+ >>> brew install cairo pango
 ```
 
 #### Install latest version of [Postgres](http://www.postgresqltutorial.com/)
