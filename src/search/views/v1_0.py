@@ -34,9 +34,6 @@ def searchSolution():
 		# uq.saveMultimidia()
 		uq.saveQuery()
 		data = uq.getResult()
-		data = {
-			"data": data
-		}
 		return Response(data, codeStatus=200).Success()
 	except Exception as e:
 		raise e
@@ -47,12 +44,10 @@ def searchSolution():
 @search.route("/solution/video", methods = ['post'])
 def videoWatched():
 	try:
-		print(dir(request))
-		data = {
-			"data": "data"
-		}
-		return Response(data, codeStatus=200).Success()
+		vv = VideoVisited(root_path)
+		d = vv.updateVideoStatus(request.json)
+		
+		return Response(d, codeStatus=200).Success()
 	except Exception as e:
-		# raise e
 		print("Exception ", e.args)
 		return Response(codeStatus=422, hint=str(e)).Error()

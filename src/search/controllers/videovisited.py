@@ -1,218 +1,87 @@
 from utils.dbConf import WriteSession, ReadSession
-from utils.redisCache import RedisConfig
 from sqlalchemy import desc, or_, and_
+from utils.awsService import aws
 from datetime import datetime
+from threading import Timer
 from flask import request
 from time import time
 from os import getenv
 from model import *
-import uuid
+import pdfkit
+import uuid, math
+from flask import Flask , render_template
 
 
 class VideoVisited:
 
-	def __init__(self, rootPath):
-		self.rootPath = rootPath
-		self.redis = RedisConfig()
-		self.unique_question_set = []
-		self.unique_question_ids = []
-
-# 	def saveMultimidia(self):
-# 		try:
-# 			self.request_headers = {}
-# 			for i in request.headers:
-# 				self.request_headers[i[0]] = i[1]
-# 			# print("request.headers", request.headers)
-			
-# 			upload_file_path = '{0}/{1}/file_{2}'.format(self.rootPath, getenv("UPLOAD_FILE_FOLDER"), "".join(str(time()).split(".")))
-
-# 			if 'files' not in request.files:
-# 				raise Exception("File object not found")
-
-# 			file = request.files['files']
-
-# 			if file.filename == '':
-# 				raise Exception("file not available")
-
-# 			if file:
-
-# 				filename = secure_filename(file.filename)
-
-# 				with open(upload_file_path, 'wb') as f:
-# 					f.write(file.stream.read())
-# 					file_name = upload_file_path.split("/")[-1]
-# 					s3_file_path = "{0}/{1}/{2}".format(getenv("IMAGE_PROCESSING_BUCKET"), getenv("SEARCH_IMAGES_BUCKET"), file_name)
-# 					self.file_name = self.aws_client.uploadFileIntoS3(upload_file_path, s3_file_path)
-# 					print("self.file_name: ", self.file_name)
-# 			else:
-# 				raise Exception("file object not found on request")
-# 		except Exception as e:
-# 			raise e
+	def __init__(self, root_path):
+		self.root_path = root_path
+		self.aws_client = aws()
 
 
-# 	def saveQuery(self):
-# 		session = WriteSession()
-# 		try:
-# 			self.saveMultimidia()
-# 			print("self.request_headers: ", self.request_headers)
-# 			uaq = UserAskedQuestion(
-# 				id = str(uuid.uuid4()),
-# 				image_url = self.file_name,
-# 				request_obj = self.request_headers,
-# 				is_response_served = False,
-# 				is_disable = False,
-# 				is_delete = False,
-# 				created_at = datetime.utcnow(),
-# 				updated_at = None,
-# 				deleted_at = None
-# 			)
-# 			session.add(uaq)
-# 			session.commit()
-# 			self.user_question_ref = uaq.id
-# 			return 
-# 		except Exception as e:
-# 			session.rollback()
-# 			raise e
-# 		finally:
-# 			session.close()
-
-
-# 	def getResult(self):
-# 		count = self.redis.getValue(getenv("TOTAL_CATALOG"))
-
-# 		n = randrange(int(count) or 10)
-
-# 		session = ReadSession()
-# 		try:
-# 			random_data = session.query(QuestionCatalog).filter(
-# 				and_(
-# 					QuestionCatalog.is_delete==False,
-# 					QuestionCatalog.is_disable==False
-# 				)
-# 			).order_by(QuestionCatalog.id).offset(n-1).limit(1).all()
-
-# 			catalog_id = random_data[0].dict_object()["id"]
-# 			catalog_id = "9a8b88ab-f408-4377-add8-692c5034ddd6"
-# 			print("catalog_id: ", catalog_id)
-# 			"""
-# 				for paginating we need to create a track id at 1st 
-# 				and based on that track id can apply the pagination 
-# 				concept for making api smoother
-# 			"""
-
-			
-# 			mapped_val = session.query(QuestionCatalogCategory).filter(
-# 				QuestionCatalogCategory.catalog_id == catalog_id
-# 			).all()
-
-# 			same_cateogry_question = session.query(
-# 				QuestionCatalogCategory, QuestionCatalog
-# 			).join("question_calg").filter(
-# 				QuestionCatalogCategory.category_id == mapped_val[0].category_id
-# 			).all()
-# 			result = []
-# 			for idx, val in enumerate(same_cateogry_question):
-# 				if idx == len(same_cateogry_question):
-# 					self.last_videos_id = val.QuestionCatalog.id
-# 				solution = val.QuestionCatalog.dict_object()
-# 				category_ids = self.getSuggestedCategories(solution["id"])
-# 				solution["similar_result"] = self.getSuggestedQuestions(category_ids)
-# 				result.append(solution)
-
-# 			# self.saveForRequestedUser()
-# 			return result
-
-# 		except Exception as e:
-# 			raise e
-# 		finally:
-# 			session.close()
-
-
-# 	def getSuggestedCategories(self, question_id=None):
-# 		session = ReadSession()
-# 		try:
-# 			mapped_val = session.query(QuestionCatalogCategory).filter(
-# 				QuestionCatalogCategory.catalog_id == question_id
-# 			).all()
-# 			category_ids = [i.category_id for i in mapped_val]
-# 			return category_ids
-# 		except Exception as e:
-# 			raise e
-# 		finally:
-# 			session.close()
+	def updateVideoStatus(self, req={}):
+		"""
 		
+		"""
+		session = ReadSession()
+		try:
+			if "ref_id" not in req:
+				raise Exception("ref_id not found")
+			if "video_id" not in req:
+				raise Exception("video id not found")
+
+			self.ref_id = req["ref_id"]
+			watch_video = session.query(SimilarQuestionPerUser).filter(
+				and_(
+					SimilarQuestionPerUser.question_id == req["video_id"],
+					SimilarQuestionPerUser.query_ref_id == req["ref_id"]
+				)
+			).all()
+			# watch_video = watch_video[0]
+
+			if(not len(watch_video)):
+				raise Exception("Video not found")
+			elif (watch_video[0].is_last_video):
+				# self.runAfter5Min()
+				return self.createPDF()
+			return 
+		except Exception as e:
+			session.rollback()
+			raise e
+		finally:
+			session.close()
+
+	def createPDF(self):
+		session = WriteSession()
+		try:
+			all_watched_video = session.query(SimilarQuestionPerUser).filter(
+				SimilarQuestionPerUser.query_ref_id == self.ref_id
+			).all()
+			l = []
+			for i in all_watched_video:
+				l.append(i.dict_object())
+
+			per_page = 44
+			render_string = render_template("questions.html", questions=l, total=len(all_watched_video), total_page = math.ceil(len(all_watched_video)/per_page), per_page=per_page)
+			output = 'image_activity/out-{}.pdf'.format("".join(str(time()).split(".")))
+			pdf = pdfkit.from_string(render_string, output)
+			# print("pdf: ", pdf)
+
+			upload_file_path = self.root_path+"/"+output
+			file_name = upload_file_path.split("/")[-1]
+			s3_file_path = "{0}/{1}/{2}".format(getenv("IMAGE_PROCESSING_BUCKET"), getenv("SEARCH_IMAGES_BUCKET"), file_name)
+			self.file_name = self.aws_client.uploadFileIntoS3(upload_file_path, s3_file_path)
+
+			return self.file_name
+		except Exception as e:
+			raise e
+		finally:
+			pass
 
 
-# 	def getSuggestedQuestions(self, category_ids=[]):
-# 		session = ReadSession()
-# 		try:
-# 			same_cateogry_question = session.query(
-# 				QuestionCatalogCategory, QuestionCatalog
-# 			).join("question_calg").filter(
-# 				QuestionCatalogCategory.category_id.in_(category_ids)
-# 			).all()
-# 			temp = []
-# 			duplicate_ids = []
-# 			for val in same_cateogry_question:
-# 				val = val.QuestionCatalog.selected_dict_object(["id", "questions"])
-# 				if val["id"] not in duplicate_ids:
-# 					temp.append(val)
-# 					duplicate_ids.append(val["id"])
-# 					self.prepareQuestionSet(val)
-# 			return temp
-# 		except Exception as e:
-# 			raise e
-# 		finally:
-# 			session.close()
-
-# 	def prepareQuestionSet(self, questionObject=None):
-# 		if(questionObject["id"] not in self.unique_question_ids):
-# 			self.unique_question_set.append(questionObject)
-# 			self.unique_question_ids.append(questionObject["id"])
-
-# 	def saveForRequestedUser(self):
-# 		session = WriteSession()
-# 		try:
-# 			found = False
-# 			print("self.unique_question_set: ", self.unique_question_set)
-# 			for obj in self.unique_question_set:
-# 				if self.last_videos_id == obj["id"]:
-# 					found = True
-# 				print("found: ", found)
-# 				sqpu = SimilarQuestionPerUser(
-# 					id = str(uuid4()),
-# 					question_id = obj["id"],
-# 					question = obj["questions"],
-# 					query_ref_id = self.user_question_ref,
-# 					is_last_video = found,
-# 					is_disable = False,
-# 					is_delete = False,
-# 					created_at = datetime.now(),
-# 					updated_at = None,
-# 					deleted_at = None
-# 				)
-# 				session.add(sqpu)
-# 			if not found:
-# 				session.add(SimilarQuestionPerUser(
-# 					id = str(uuid4()),
-# 					question_id = obj["id"],
-# 					question = obj["questions"],
-# 					query_ref_id = self.user_question_ref,
-# 					is_last_video = True,
-# 					is_disable = False,
-# 					is_delete = False,
-# 					created_at = datetime.now(),
-# 					updated_at = None,
-# 					deleted_at = None
-# 				))
-			
-# 			# session.commit()
-# 		except Exception as e:
-# 			session.rollback()
-# 			raise e
-# 		finally:
-# 			session.close()
-
+	def runAfter5Min(self):
+		t = Timer(10.0, self.createPDF)
+		t.start()
 
 
 

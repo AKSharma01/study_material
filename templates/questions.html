@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="generator" content="motive">
+    <title>Manifest</title>
+
+    <style>
+        @media print {
+            .demo {
+                background-color: #313ffe !important;
+                color: #fff;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .color {
+                color: #313ffe;
+                font-weight: bold;
+            }
+
+            .bff {
+                background-color: #F9DA58;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .table-bordered {
+                border: 1px solid black;
+                color: #343a40;
+            }
+
+            .table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+                border: 1px solid black;
+                color: #343a40;
+            }
+
+            .rt_color {
+                color: #296F8B;
+            }
+        }
+
+
+        .bff {
+            background-color: #F9DA58;
+        }
+
+
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        .center {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            margin-bottom: 20px;
+            width: 1200px;
+            margin: 0 auto;
+        }
+
+        .table-bordered {
+            border: 1px solid black;
+            color: #343a40;
+        }
+
+        .table > caption + thead > tr:first-child > td, .table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > td, .table > thead:first-child > tr:first-child > th {
+            border-top: 0 none;
+        }
+
+        .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+            order-bottom-width: 2px;
+        }
+
+        .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+            line-height: 1.42857;
+            padding: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+            border: 1px solid black;
+            color: #343a40;
+        }
+
+        p {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        h3 {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        h2 {
+            padding: 0px;
+            margin: 0px;
+        }
+
+
+
+        .b_left {
+            border-left: 1px solid #fff !important;
+        }
+
+        .b_right {
+            border-right: 1px solid #fff !important;
+        }
+
+        .b_top {
+            border-top: 1px solid #fff !important;
+        }
+
+        .b_bottom {
+            border-bottom: 1px solid #fff !important;
+        }
+
+
+
+        .new_widht {
+            width: 220px;
+        }
+
+
+
+        .www_50 {
+            width: 50%;
+        }
+
+        .text_left {
+            text-align: left !important;
+        }
+        .no-pad {
+            padding: 0px;
+        }
+    </style>
+</head>
+<body>
+{% for i in range(total_page) %}
+<table class="table" style="font-family: Arial">
+	<br/>
+    <tr class=" ">
+        <td style="width: 50%;">
+            <b style="color: #BA0000;font-size: 20px">PDF File<br></b>
+            <b style="font-size: 20px"></b>
+        </td>
+        <td style="width: 20%;">
+            <p style="color: #343a40;font-size: 20px">Page No: {{i+1}}</p>
+        </td>
+        <!-- <td style="width: 30%;">
+        <b style="color: #343a40;font-size: 16px">Page </b>
+        </td> -->
+
+    </tr>
+   
+    <tr class="">
+        <td class=" " colspan="12" style="text-align:center;padding:0px;">
+            <table class="table table-bordered" style="width:100%;font-family: Arial;">
+                <tr class="bff">
+                    <td ><b>No.</b></td>
+                    <td ><b>Question#</b></td>
+                </tr>
+                {% for j in range(per_page)%}
+                <tr  valign="top" style="padding: 0px;vertical-align: middle">
+                    {% if questions[(i*per_page)+j]%}
+                    <td  style="padding: 0px">{{(i*per_page)+j+1}}</td>
+                    <td style="">{{questions[(i*per_page)+j]["question"] if questions[(i*per_page)+j]}}</td>
+                    {%endif%}
+                </tr>
+                {%endfor%}
+            </table>
+        </td>
+    </tr>
+
+</table>
+<br/><br/><br/>
+
+{% endfor %}
+
+</body>
+
+</html>
