@@ -1,0 +1,78 @@
+DEBUG=True
+SECRET_KEY=1729a97b6ae079ea290d986bdc8bbff4877c7f13c9c266420f7d3076669a3874
+
+ENV=DEV
+
+
+
+//==================================== Folder name =======================================
+
+UPLOAD_FILE_FOLDER = upload_file_folder
+IMAGE_ACTIVITY_PATH = image_activity
+MODEL_PATH=model
+
+
+
+//==================================== Redis keys =======================================
+TOTAL_CATALOG = total_catalog
+TOTAL_CATEGORY = total_category
+
+
+
+//==================================== LOCAL ENV =======================================
+
+
+LOCAL_PSQL_DB_USER=postgres
+LOCAL_PSQL_DB_PASSWORD=password
+LOCAL_PSQL_DB_PORT=3306
+LOCAL_PSQL_DB_NAME=doubtnut
+LOCAL_PSQL_DB_HOST_READ=localhost
+LOCAL_PSQL_DB_HOST_WRITE=localhost
+
+
+
+LOCAL_REDIS_DB_PASSWORD=
+LOCAL_REDIS_DB_PORT=6379
+LOCAL_REDIS_DB_NAME=0
+LOCAL_REDIS_DB_HOST=localhost
+LOCAL_REDIS_DB_TYPE=redis
+
+
+//==================================== DEV ENV =======================================
+
+
+DEV_PSQL_DB_USER=
+DEV_PSQL_DB_PASSWORD=
+DEV_PSQL_DB_PORT=
+DEV_PSQL_DB_NAME=
+DEV_PSQL_DB_HOST_READ=
+DEV_PSQL_DB_HOST_WRITE=
+
+
+
+DEV_REDIS_DB_PASSWORD=
+DEV_REDIS_DB_PORT=
+DEV_REDIS_DB_NAME=
+DEV_REDIS_DB_HOST=
+DEV_REDIS_DB_TYPE=
+
+
+
+
+
+
+S3_BASE_URL=https://s3.ap-south-1.amazonaws.com
+AWS_S3_BUCKET=doubtnut
+IMAGE_PROCESSING_BUCKET=image_processing
+
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_KEY=
+AWS_REGION_S3=
+
+
+output = json
+
+VERSION=1.0
+
+DUMMY_DOMAIN=http://dummy.videos.io/watch?v=
