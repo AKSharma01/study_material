@@ -22,6 +22,9 @@ class UserQuery:
 		self.unique_question_ids = []
 
 	def saveMultimidia(self):
+		"""
+		saveMultimidia function will upload the image in s3 bucket
+		"""
 		try:
 			self.request_headers = {}
 			for i in request.headers:
@@ -55,10 +58,13 @@ class UserQuery:
 
 
 	def saveQuery(self):
+		"""
+			saveQuery function save the user request detail in user_asked_question table
+		"""
 		session = WriteSession()
 		try:
 			self.saveMultimidia()
-			print("self.request_headers: ", self.request_headers)
+			# print("self.request_headers: ", self.request_headers)
 			uaq = UserAskedQuestion(
 				id = str(uuid.uuid4()),
 				image_url = self.file_name,
@@ -82,6 +88,17 @@ class UserQuery:
 
 
 	def getResult(self):
+		"""
+			in getResult function, count is to cache the total count of catalog 
+		saved in catalog table 
+		n = random no generated within that range (i.e. total catalog count)
+		catalog_id is a id to find the category id of that matched catalog
+		from QuestionCatalogCategory (which is many-many relation) find out
+		the similar question which lay in same category
+
+		"""
+
+
 		count = self.redis.getValue(getenv("TOTAL_CATALOG"))
 
 		n = randrange(int(count) or 10)
@@ -96,8 +113,8 @@ class UserQuery:
 			).order_by(QuestionCatalog.id).offset(n-1).limit(1).all()
 
 			catalog_id = random_data[0].dict_object()["id"]
-			catalog_id = "9a8b88ab-f408-4377-add8-692c5034ddd6"
-			print("catalog_id: ", catalog_id)
+			# catalog_id = "9a8b88ab-f408-4377-add8-692c5034ddd6"
+			# print("catalog_id: ", catalog_id)
 			"""
 				for paginating we need to create a track id at 1st 
 				and based on that track id can apply the pagination 
@@ -148,6 +165,10 @@ class UserQuery:
 
 
 	def getSuggestedQuestions(self, category_ids=[]):
+		"""
+			getSuggestedQuestions function get all the question which belongs to the 
+		list of category ids passed in the parameter.
+		"""
 		session = ReadSession()
 		try:
 			same_cateogry_question = session.query(
@@ -170,11 +191,18 @@ class UserQuery:
 			session.close()
 
 	def prepareQuestionSet(self, questionObject=None):
+		"""
+			prepareQuestionSet prepare the list of unique questions
+		"""
 		if(questionObject["id"] not in self.unique_question_ids):
 			self.unique_question_set.append(questionObject)
 			self.unique_question_ids.append(questionObject["id"])
 
 	def saveForRequestedUser(self):
+		"""
+			found is use to find out the last video solution.
+		based on which we return the question set
+		"""
 		session = WriteSession()
 		try:
 			found = False

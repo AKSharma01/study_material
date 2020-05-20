@@ -30,6 +30,10 @@ def test():
 @questions_category.route("/question", methods = ['post'])
 def questionsGenerator():
 	try:
+		"""
+			this route is used to create dummpy catalog set in question_catalog table
+		with with dummy question and dummy videos solution link
+		"""
 		qs = QuestionSet()
 		result = qs.generator()
 		data = {
@@ -44,6 +48,9 @@ def questionsGenerator():
 @questions_category.route("/category", methods = ['post'])
 def categoryGenerator():
 	try:
+		"""
+			this route is used to create list of categories
+		"""
 		cs = CategorySet()
 		result = cs.generator()
 		data = {
@@ -59,6 +66,10 @@ def categoryGenerator():
 @questions_category.route("/mapping", methods = ['post'])
 def questionsCategoryGenerator():
 	try:
+		"""
+			this route is used to create ralation between question_catalog table and
+		question_category table.
+		"""
 		cs = CatalogCategoryMapping()
 		result = cs.mapper()
 		data = {

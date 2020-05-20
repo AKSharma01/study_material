@@ -21,7 +21,10 @@ class VideoVisited:
 
 	def updateVideoStatus(self, req={}):
 		"""
-		
+			updateVideoStatus function check if the video id match with 
+		last video id of the list shown to the user then a pdf will be generated
+		based on ref_id and data will be taken out from similar_question_per_user
+		table.
 		"""
 		session = ReadSession()
 		try:
@@ -52,6 +55,9 @@ class VideoVisited:
 			session.close()
 
 	def createPDF(self):
+		"""
+			createPDF function is use to create the pdf based on the question set.
+		"""
 		session = WriteSession()
 		try:
 			all_watched_video = session.query(SimilarQuestionPerUser).filter(
@@ -80,7 +86,10 @@ class VideoVisited:
 
 
 	def runAfter5Min(self):
-		t = Timer(10.0, self.createPDF)
+		"""
+			timer for 5 min
+		"""
+		t = Timer((60.0*5), self.createPDF)
 		t.start()
 
 
