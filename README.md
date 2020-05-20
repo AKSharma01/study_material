@@ -36,6 +36,7 @@ __Table of content__
 ```sh
  >>> sudo git clone https://github.com/AKSharma01/study_material.git
  >>> cd study_material
+ >>> mv env .env
  >>> virtualenv venv -p python3 (create local enviroment)
  >>> source venv/bin/activate
  >>> pip install -r requirement.txt (to install project dependencies)
