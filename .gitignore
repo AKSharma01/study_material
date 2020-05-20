@@ -1,0 +1,11 @@
+.DS_Store
+.ipynb_checkpoints/
+upload_file_folder/
+image_activity/
+__pycache__/
+migrations/
+images/
+venv/
+*.log
+*.pyc
+.env
