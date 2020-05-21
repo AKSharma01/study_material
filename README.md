@@ -40,7 +40,6 @@ __Table of content__
  >>> virtualenv venv -p python3 (create local enviroment)
  >>> source venv/bin/activate
  >>> pip install -r requirement.txt (to install project dependencies)
- >>> touch .env (save the project env in .env file)
  >>> python manager.py db init
  >>> python manager.py db migrate
  >>> python manager.py db upgrade
